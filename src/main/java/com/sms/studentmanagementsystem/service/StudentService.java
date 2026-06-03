@@ -3,6 +3,8 @@ package com.sms.studentmanagementsystem.service;
 import com.sms.studentmanagementsystem.dto.request.StudentCreateRequest;
 import com.sms.studentmanagementsystem.dto.request.StudentUpdateRequest;
 import com.sms.studentmanagementsystem.dto.response.StudentResponse;
+import org.apache.logging.log4j.util.Strings;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -16,4 +18,6 @@ public interface StudentService {
     void deleteStudent(Long id);
 
     StudentResponse updateStudent(Long id, StudentUpdateRequest request);
+
+    Page<StudentResponse> searchStudents(String keyword, int page, int size, String sortBy, String direction);
 }

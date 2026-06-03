@@ -10,6 +10,7 @@ import com.sms.studentmanagementsystem.mapper.StudentMapper;
 import com.sms.studentmanagementsystem.repository.StudentRepository;
 import com.sms.studentmanagementsystem.service.StudentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -84,5 +85,31 @@ public class StudentServiceImpl implements StudentService {
         Student updatedStudent = studentRepository.save(student);
 
         return studentMapper.toResponse(updatedStudent);
+    }
+
+    @Override
+    public Page<StudentResponse> searchStudents(String keyword,int page,int size,String sortBy,String direction) {
+
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page,size,sort);
+
+        Page<Student> studentPage = studentRepository.findByFirstNameContainingIgnoreCase(
+                keyword,
+                pageable
+        );
+        List<StudentResponse> responses = studentPage.getContent()
+                .stream()
+                .map(studentMapper::toResponse)
+                .toList();
+
+        return new PageImpl<>(
+                responses,
+                pageable,
+                studentPage.getTotalElements()
+        );
+
     }
 }
