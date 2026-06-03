@@ -1,6 +1,7 @@
 package com.sms.studentmanagementsystem.controller;
 import com.sms.studentmanagementsystem.common.ApiResponse;
 import com.sms.studentmanagementsystem.dto.request.StudentCreateRequest;
+import com.sms.studentmanagementsystem.dto.request.StudentUpdateRequest;
 import com.sms.studentmanagementsystem.dto.response.StudentResponse;
 import com.sms.studentmanagementsystem.repository.StudentRepository;
 import com.sms.studentmanagementsystem.service.StudentService;
@@ -56,6 +57,16 @@ public class StudentController {
                 true,
                 "Student deleted successfully",
                 null
+        );
+    }
+
+    @PutMapping("/{id}")
+    public ApiResponse<StudentResponse> updateStudent(@PathVariable Long id, @Valid @RequestBody StudentUpdateRequest request){
+        StudentResponse response = studentService.updateStudent(id,request);
+        return new ApiResponse<>(
+                true,
+                "Student updated successfully",
+                response
         );
     }
 }
