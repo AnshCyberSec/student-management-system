@@ -1,8 +1,10 @@
 package com.sms.studentmanagementsystem.service.impl;
 
 import com.sms.studentmanagementsystem.dto.request.StudentCreateRequest;
+import com.sms.studentmanagementsystem.dto.request.StudentUpdateRequest;
 import com.sms.studentmanagementsystem.dto.response.StudentResponse;
 import com.sms.studentmanagementsystem.entity.Student;
+import com.sms.studentmanagementsystem.exception.DuplicateResourceException;
 import com.sms.studentmanagementsystem.exception.ResourceNotFoundException;
 import com.sms.studentmanagementsystem.mapper.StudentMapper;
 import com.sms.studentmanagementsystem.repository.StudentRepository;
@@ -49,5 +51,38 @@ public class StudentServiceImpl implements StudentService {
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Student not found with id : " + id));
         studentRepository.delete(student);
+    }
+
+    @Override
+    public StudentResponse updateStudent(Long id, StudentUpdateRequest request) {
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Student not found with id: " + id
+                ));
+
+        if (!student.getEmail().equals(request.getEmail()) && studentRepository.existsByEmail(request.getEmail())){
+            throw new DuplicateResourceException(
+                    "Email already exists"
+            );
+
+        }
+        if (!student.getPhoneNumber().equals(request.getPhoneNumber()) && studentRepository.existsByPhoneNumber(request.getPhoneNumber())){
+            throw new DuplicateResourceException(
+                    "Phone number already exists"
+            );
+        }
+
+        student.setFirstName(request.getFirstName());
+        student.setLastName(request.getLastName());
+        student.setEmail(request.getEmail());
+        student.setPhoneNumber(request.getPhoneNumber());
+        student.setDateOfBirth(request.getDateOfBirth());
+        student.setGender(request.getGender());
+        student.setAddress(request.getAddress());
+        student.setCourse(request.getCourse());
+
+        Student updatedStudent = studentRepository.save(student);
+
+        return studentMapper.toResponse(updatedStudent);
     }
 }
