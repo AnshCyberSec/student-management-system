@@ -1,0 +1,42 @@
+package com.sms.studentmanagementsystem.entity;
+
+import com.sms.studentmanagementsystem.common.BaseEntity;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(
+        name = "users",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = "username"),
+                @UniqueConstraint(columnNames = "email")
+        }
+)
+public class User  extends BaseEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false,length = 50)
+    private String username;
+
+    @Column(nullable = false,length = 100)
+    private String email;
+
+    @Column(nullable = false)
+    private String password;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
+
+    @Column(nullable = false)
+    private boolean active = true;
+}
