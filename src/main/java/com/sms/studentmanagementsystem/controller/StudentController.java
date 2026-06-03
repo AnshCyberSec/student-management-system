@@ -7,6 +7,7 @@ import com.sms.studentmanagementsystem.repository.StudentRepository;
 import com.sms.studentmanagementsystem.service.StudentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -69,4 +70,21 @@ public class StudentController {
                 response
         );
     }
+
+    @GetMapping("/search")
+    public ApiResponse<Page<StudentResponse>> searchStudents(@RequestParam String keyword,
+                                                             @RequestParam(defaultValue = "0") int page,
+                                                             @RequestParam(defaultValue = "5") int size,
+                                                             @RequestParam(defaultValue = "firstName") String sortBy,
+                                                             @RequestParam(defaultValue = "asc") String direction){
+
+        Page<StudentResponse> students = studentService.searchStudents(keyword,page,size,sortBy,direction);
+
+        return new ApiResponse<>(
+                true,
+                "Students fetched successfully",
+                students
+        );
+    }
+
 }
