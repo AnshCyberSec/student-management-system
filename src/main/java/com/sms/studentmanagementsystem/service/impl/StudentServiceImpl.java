@@ -96,10 +96,11 @@ public class StudentServiceImpl implements StudentService {
 
         Pageable pageable = PageRequest.of(page,size,sort);
 
-        Page<Student> studentPage = studentRepository.findByFirstNameContainingIgnoreCase(
-                keyword,
-                pageable
-        );
+        Page<Student> studentPage =
+                studentRepository.searchStudents(
+                        keyword,
+                        pageable
+                );
         List<StudentResponse> responses = studentPage.getContent()
                 .stream()
                 .map(studentMapper::toResponse)

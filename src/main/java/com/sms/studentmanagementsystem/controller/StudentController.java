@@ -2,6 +2,7 @@ package com.sms.studentmanagementsystem.controller;
 import com.sms.studentmanagementsystem.common.ApiResponse;
 import com.sms.studentmanagementsystem.dto.request.StudentCreateRequest;
 import com.sms.studentmanagementsystem.dto.request.StudentUpdateRequest;
+import com.sms.studentmanagementsystem.dto.response.PaginationResponse;
 import com.sms.studentmanagementsystem.dto.response.StudentResponse;
 import com.sms.studentmanagementsystem.repository.StudentRepository;
 import com.sms.studentmanagementsystem.service.StudentService;
@@ -72,7 +73,7 @@ public class StudentController {
     }
 
     @GetMapping("/search")
-    public ApiResponse<Page<StudentResponse>> searchStudents(@RequestParam String keyword,
+    public ApiResponse<PaginationResponse<StudentResponse>> searchStudents(@RequestParam String keyword,
                                                              @RequestParam(defaultValue = "0") int page,
                                                              @RequestParam(defaultValue = "5") int size,
                                                              @RequestParam(defaultValue = "firstName") String sortBy,
@@ -80,10 +81,20 @@ public class StudentController {
 
         Page<StudentResponse> students = studentService.searchStudents(keyword,page,size,sortBy,direction);
 
+        PaginationResponse<StudentResponse> response = new PaginationResponse<>();
+
+        response.setData(students.getContent());
+        response.setCurrentPage(students.getNumber());
+        response.setPageSize(students.getSize());
+        response.setTotalElements(students.getTotalElements());
+        response.setTotalPages(students.getTotalPages());
+        response.setHasNext(students.hasNext());
+        response.setHasPrevious(students.hasPrevious());
+
         return new ApiResponse<>(
                 true,
                 "Students fetched successfully",
-                students
+                response
         );
     }
 
